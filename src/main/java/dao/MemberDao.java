@@ -1,5 +1,6 @@
 package dao;
 
+import util.DBConnectionPool;
 import vo.Member;
 
 import java.sql.*;
@@ -7,16 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemberDao {
-    Connection connection;
+    DBConnectionPool connPool;
 
-    public void setConnection(Connection connection){
-        this.connection=connection;
+    public void setDbConnectionPool(DBConnectionPool connPoll) {
+        this.connPool=connPoll;
     }
 
     public int insert(Member member) {
         PreparedStatement stmt = null;
+        Connection connection = null;
 
         try {
+            connection = connPool.getConnection();
             stmt = connection.prepareStatement("INSERT INTO MEMBERS(EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE) VALUES (?, ?, ?, NOW(), NOW())");
             stmt.setString(1, member.getEmail());
             stmt.setString(2, member.getPassword());
@@ -32,7 +35,9 @@ public class MemberDao {
 
     public int delete(int no) {
         PreparedStatement stmt = null;
+        Connection connection = null;
         try {
+            connection = connPool.getConnection();
             stmt = connection.prepareStatement("DELETE FROM members WHERE MNO=?");
             stmt.setInt(1, no);
             stmt.executeUpdate();
@@ -49,7 +54,9 @@ public class MemberDao {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Member member =null;
+        Connection connection = null;
         try{
+            connection = connPool.getConnection();
             stmt = connection.prepareStatement("SELECT MNO, MNAME, EMAIL, CRE_DATE FROM members WHERE MNO=?");
             stmt.setInt(1, no);
             rs = stmt.executeQuery();
@@ -67,7 +74,9 @@ public class MemberDao {
 
 //    회원 정보 변경
     public int update(Member member){
+        Connection connection = null;
         try {
+            connection = connPool.getConnection();
             PreparedStatement stmt = connection.prepareStatement("UPDATE MEMBERS SET EMAIL=?, MNAME=?, MOD_DATE=NOW() WHERE MNO=?");
             stmt.setString(1, member.getEmail());
             stmt.setString(2, member.getName());
@@ -82,7 +91,9 @@ public class MemberDao {
 //    있으면 Member 객체 리턴, 없으면 null 리턴
     public Member exist(String email, String password){
         PreparedStatement stmt = null;
+        Connection connection = null;
         try {
+            connection = connPool.getConnection();
             stmt = connection.prepareStatement("SELECT MNO, MNAME, EMAIL, CRE_DATE FROM members WHERE EMAIL=? AND PWD=?");
             stmt.setString(1, email);
             stmt.setString(2, password);
@@ -102,9 +113,11 @@ public class MemberDao {
     public List<Member> selectList() {
         Statement stmt = null;
         ResultSet rs = null;
+        Connection connection = null;
         ArrayList<Member> members = new ArrayList<Member>();
 
         try{
+            connection = connPool.getConnection();
             stmt = connection.createStatement();
             rs = stmt.executeQuery(
                     "SELECT MNO, MNAME, EMAIL, CRE_DATE FROM MEMBERS order by MNO asc "

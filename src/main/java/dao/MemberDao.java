@@ -11,7 +11,7 @@ import java.util.List;
 public class MemberDao {
     DataSource ds;
 
-    public void setDataSource(BasicDataSource ds) {
+    public void setDataSource(DataSource ds) {
         this.ds = ds;
     }
 

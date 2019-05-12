@@ -1,17 +1,18 @@
 package dao;
 
-import util.DBConnectionPool;
+import org.apache.commons.dbcp.BasicDataSource;
 import vo.Member;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MemberDao {
-    DBConnectionPool connPool;
+    DataSource ds;
 
-    public void setDbConnectionPool(DBConnectionPool connPoll) {
-        this.connPool=connPoll;
+    public void setDataSource(BasicDataSource ds) {
+        this.ds = ds;
     }
 
     public int insert(Member member) {
@@ -19,7 +20,7 @@ public class MemberDao {
         Connection connection = null;
 
         try {
-            connection = connPool.getConnection();
+            connection = ds.getConnection();
             stmt = connection.prepareStatement("INSERT INTO MEMBERS(EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE) VALUES (?, ?, ?, NOW(), NOW())");
             stmt.setString(1, member.getEmail());
             stmt.setString(2, member.getPassword());
@@ -29,6 +30,7 @@ public class MemberDao {
             e.printStackTrace();
         } finally {
             try{ if(stmt!= null){stmt.close();}} catch (SQLException e) {}
+            try{ if(connection!= null){connection.close();}} catch (SQLException e) {}
         }
         return 0;
     }
@@ -37,13 +39,14 @@ public class MemberDao {
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
-            connection = connPool.getConnection();
+            connection = ds.getConnection();
             stmt = connection.prepareStatement("DELETE FROM members WHERE MNO=?");
             stmt.setInt(1, no);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            try{ if(connection!= null){connection.close();}} catch (SQLException e) {}
             try{ if(stmt!= null){stmt.close();}} catch (SQLException e) {}
         }
         return no;
@@ -56,7 +59,7 @@ public class MemberDao {
         Member member =null;
         Connection connection = null;
         try{
-            connection = connPool.getConnection();
+            connection = ds.getConnection();
             stmt = connection.prepareStatement("SELECT MNO, MNAME, EMAIL, CRE_DATE FROM members WHERE MNO=?");
             stmt.setInt(1, no);
             rs = stmt.executeQuery();
@@ -67,6 +70,7 @@ public class MemberDao {
             e.printStackTrace();
         } finally {
             try{ if(stmt!=null) stmt.close(); } catch (SQLException e) {}
+            try{ if(connection!= null){connection.close();}} catch (SQLException e) {}
             try{ if(rs!=null) rs.close(); } catch (SQLException e) {}
         }
         return member;
@@ -76,7 +80,7 @@ public class MemberDao {
     public int update(Member member){
         Connection connection = null;
         try {
-            connection = connPool.getConnection();
+            connection = ds.getConnection();
             PreparedStatement stmt = connection.prepareStatement("UPDATE MEMBERS SET EMAIL=?, MNAME=?, MOD_DATE=NOW() WHERE MNO=?");
             stmt.setString(1, member.getEmail());
             stmt.setString(2, member.getName());
@@ -84,6 +88,8 @@ public class MemberDao {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try{ if(connection!= null){connection.close();}} catch (SQLException e) {}
         }
         return 0;
     }
@@ -93,7 +99,7 @@ public class MemberDao {
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
-            connection = connPool.getConnection();
+            connection = ds.getConnection();
             stmt = connection.prepareStatement("SELECT MNO, MNAME, EMAIL, CRE_DATE FROM members WHERE EMAIL=? AND PWD=?");
             stmt.setString(1, email);
             stmt.setString(2, password);
@@ -106,6 +112,8 @@ public class MemberDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try{ if(connection!= null){connection.close();}} catch (SQLException e) {}
         }
         return null;
     }
@@ -117,7 +125,7 @@ public class MemberDao {
         ArrayList<Member> members = new ArrayList<Member>();
 
         try{
-            connection = connPool.getConnection();
+            connection = ds.getConnection();
             stmt = connection.createStatement();
             rs = stmt.executeQuery(
                     "SELECT MNO, MNAME, EMAIL, CRE_DATE FROM MEMBERS order by MNO asc "
@@ -132,6 +140,7 @@ public class MemberDao {
         } finally {
             try { if(rs!=null) rs.close();} catch (Exception e ){}
             try { if(stmt!=null) stmt.close();} catch (Exception e ){}
+            try{ if(connection!= null){connection.close();}} catch (SQLException e) {}
         }
         return members;
     }

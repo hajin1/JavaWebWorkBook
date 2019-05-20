@@ -13,6 +13,6 @@ public class LogOutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         session.invalidate();   //세션 무효화
-        response.sendRedirect("login");
+        request.setAttribute("viewUrl", "redirect:login.do");
     }
 }

@@ -6,10 +6,16 @@ import vo.Member;
 import java.util.Map;
 
 public class LogInController implements Controller {
+    MemberDao memberDao;
+
+    public LogInController setMemberDao(MemberDao memberDao) {
+        this.memberDao = memberDao;
+        return this;
+    }
+
     @Override
     public String execute(Map<String, Object> model) throws Exception {
         if (model.get("email") != null) {
-            MemberDao memberDao = (MemberDao) model.get("memberDao");
             Member member = memberDao.exist((String) model.get("email"), (String) model.get("password"));
             if (member != null) {
                 model.put("member", member);

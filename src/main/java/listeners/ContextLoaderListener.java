@@ -1,7 +1,7 @@
 package listeners;
 
 import controls.*;
-import dao.MemberDao;
+import dao.MySqlMemberDao;
 
 import javax.naming.InitialContext;
 import javax.servlet.ServletContext;
@@ -21,7 +21,7 @@ public class ContextLoaderListener implements ServletContextListener {
             InitialContext initialContext = new InitialContext();
             DataSource ds = (DataSource) initialContext.lookup("java:comp/env/jdbc/studydb");
 
-            MemberDao memberDao = new MemberDao();
+            MySqlMemberDao memberDao = new MySqlMemberDao();
             memberDao.setDataSource(ds);
 
             sc.setAttribute("/auth/login.do", new LogInController().setMemberDao(memberDao));

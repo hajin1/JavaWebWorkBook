@@ -3,6 +3,7 @@ package controls;
 import dao.MemberDao;
 import vo.Member;
 
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 public class LogInController implements Controller {
@@ -18,7 +19,8 @@ public class LogInController implements Controller {
         if (model.get("email") != null) {
             Member member = memberDao.exist((String) model.get("email"), (String) model.get("password"));
             if (member != null) {
-                model.put("member", member);
+                HttpSession session = (HttpSession)model.get("session");
+                session.setAttribute("member", member);
                 return "redirect:../member/list.do";
             } else {
                 return "/WEB-INF/views/auth/LogInFail.jsp";

@@ -1,6 +1,6 @@
 package servlets;
 
-import dao.MemberDao;
+import dao.MySqlMemberDao;
 import vo.Member;
 
 import javax.servlet.ServletContext;
@@ -21,7 +21,7 @@ public class LogInServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ServletContext sc = this.getServletContext();
-        MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
+        MySqlMemberDao memberDao = (MySqlMemberDao) sc.getAttribute("memberDao");
         Member member = memberDao.exist(request.getParameter("email"), request.getParameter("password"));
 
         if(member != null){

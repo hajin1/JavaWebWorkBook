@@ -13,7 +13,7 @@ public class ServletRequestDataBinder {
         }
 
         Set<String> paramNames = request.getParameterMap().keySet();
-        Object dataObject = dataType.newInstance();
+        Object dataObject = dataType.getConstructor().newInstance();
         Method m = null;
 
         for (String paramName : paramNames) {

@@ -1,5 +1,6 @@
 package listeners;
 
+import context.ApplicationContext;
 import controls.*;
 import dao.MySqlMemberDao;
 
@@ -12,24 +13,19 @@ import javax.sql.DataSource;
 
 @WebListener
 public class ContextLoaderListener implements ServletContextListener {
+    static ApplicationContext applicationContext;
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent event){
         try {
             ServletContext sc = event.getServletContext();
 
-            InitialContext initialContext = new InitialContext();
-            DataSource ds = (DataSource) initialContext.lookup("java:comp/env/jdbc/studydb");
-
-            MySqlMemberDao memberDao = new MySqlMemberDao();
-            memberDao.setDataSource(ds);
-
-            sc.setAttribute("/auth/login.do", new LogInController().setMemberDao(memberDao));
-            sc.setAttribute("/auth/logout.do", new LogOutController());
-            sc.setAttribute("/member/list.do", new MemberListController().setMemberDao(memberDao));
-            sc.setAttribute("/member/update.do", new MemberUpdateController().setMemberDao(memberDao));
-            sc.setAttribute("/member/delete.do", new MemberDeleteController().setMemberDao(memberDao));
-            sc.setAttribute("/member/add.do", new MemberAddController().setMemberDao(memberDao));
+            String propertiesPath = sc.getRealPath(sc.getInitParameter("contextConfigLocation"));
+            applicationContext = new ApplicationContext(propertiesPath);
 
         } catch (Exception e) {
             e.printStackTrace();

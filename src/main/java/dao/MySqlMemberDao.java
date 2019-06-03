@@ -1,5 +1,6 @@
 package dao;
 
+import annotation.Component;
 import vo.Member;
 
 import javax.sql.DataSource;
@@ -7,6 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("memberDao")
 public class MySqlMemberDao implements MemberDao {
     DataSource ds;
 

@@ -1,10 +1,12 @@
 package controls;
 
+import annotation.Component;
 import bind.DataBinding;
 import dao.MemberDao;
 
 import java.util.Map;
 
+@Component("/member/delete.do")
 public class MemberDeleteController implements Controller, DataBinding {
     MemberDao memberDao;
 

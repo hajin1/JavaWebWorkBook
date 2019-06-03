@@ -1,11 +1,12 @@
 package controls;
 
+import annotation.Component;
 import bind.DataBinding;
 import dao.MemberDao;
 import vo.Member;
 
 import java.util.Map;
-
+@Component("/member/add.do")
 public class MemberAddController implements Controller, DataBinding {
     MemberDao memberDao;
 

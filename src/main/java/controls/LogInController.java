@@ -1,5 +1,6 @@
 package controls;
 
+import annotation.Component;
 import bind.DataBinding;
 import dao.MemberDao;
 import vo.Member;
@@ -7,6 +8,7 @@ import vo.Member;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
+@Component("/auth/login.do")
 public class LogInController implements Controller, DataBinding {
     MemberDao memberDao;
 
